@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Geist } from "next/font/google";
 import { ThemeProvider } from "next-themes";
+import { Suspense } from "react";
 import { Navbar } from "@/components/landing/navbar";
 import "./globals.css";
 import { ThemeSwitcher } from "@/components/theme-switcher";
@@ -52,7 +53,9 @@ export default function RootLayout({
           enableSystem
           disableTransitionOnChange
         >
-          <Navbar />
+          <Suspense fallback={null}>
+            <Navbar />
+          </Suspense>
           <main className="pt-20">
             {children}
             <div className="fixed bottom-4 right-4 z-50">
