@@ -70,7 +70,7 @@ export async function createGreenhouseAction(prevState: FormState | null, formDa
     idealTemperatureC,
     currentTemperatureC,
     heatSupportFromDatacenterJoules,
-    heatingEnergySource,
+    heatingEnergySource: heatingEnergySource as Prisma.GreenhouseCreateInput["heatingEnergySource"],
     avgElectricConsumptionKw,
     waterUsageLitersPerDay,
     co2EnrichmentTargetPpm,

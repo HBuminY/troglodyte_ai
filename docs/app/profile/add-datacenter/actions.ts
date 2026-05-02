@@ -65,7 +65,7 @@ export async function createDatacenterAction(prevState: FormState | null, formDa
     longitude,
     avgElectricConsumptionKw,
     pue,
-    coolingType,
+    coolingType: coolingType as Prisma.DatacenterCreateInput["coolingType"],
     avgCoolingEnergyKw,
     avgNetworkUsageTbps,
     renewableEnergyPercentage,

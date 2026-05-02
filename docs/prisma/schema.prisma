@@ -6,6 +6,30 @@ datasource db {
   provider  = "postgresql"
 }
 
+enum Role {
+  USER
+  ADMIN
+}
+
+enum CoolingType {
+  WATER
+  AIR
+}
+
+enum HeatingEnergySource {
+  ELECTRIC
+  GAS
+  WASTE_HEAT
+}
+
+model User {
+  id        String   @id // Maps to Supabase auth.users id
+  email     String   @unique
+  role      Role     @default(USER)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
 model TestTable {
   id        Int      @id @default(autoincrement())
   message   String
@@ -19,7 +43,7 @@ model Datacenter {
   longitude                 Float    // Coordinate location
   avgElectricConsumptionKw  Float    // Average electric consumption in kW
   pue                       Float    // Power Usage Effectiveness
-  coolingType               String   // e.g., "WATER" or "AIR"
+  coolingType               CoolingType // WATER or AIR
   avgCoolingEnergyKw        Float    // Average energy used for cooling in kW
   avgNetworkUsageTbps       Float    // Average network usage in Tbps
   renewableEnergyPercentage Float    // Percentage of renewable energy (0-100%)
@@ -36,7 +60,7 @@ model Greenhouse {
   idealTemperatureC         Float    // Ideal temperature in Celsius
   currentTemperatureC       Float    // Current temperature in Celsius
   heatSupportFromDatacenterJoules Float // Heat energy received from the datacenter in Joules
-  heatingEnergySource       String   // e.g., "ELECTRIC", "GAS", "WASTE_HEAT"
+  heatingEnergySource       HeatingEnergySource // ELECTRIC, GAS, or WASTE_HEAT
   avgElectricConsumptionKw  Float    // Average electric consumption in kW
   waterUsageLitersPerDay    Float    // Water usage for plants & cooling
   co2EnrichmentTargetPpm    Float    // Supplemental CO2 usage target
@@ -44,3 +68,4 @@ model Greenhouse {
   createdAt                 DateTime @default(now())
   updatedAt                 DateTime @updatedAt
 }
+
