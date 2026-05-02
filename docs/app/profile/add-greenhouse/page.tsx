@@ -2,7 +2,7 @@
 
 import dynamic from 'next/dynamic';
 import { useState, useActionState } from 'react';
-import { createDatacenterAction } from './actions';
+import { createGreenhouseAction } from './actions';
 
 const LocationPicker = dynamic(() => import('@/components/LocationPicker'), { 
   ssr: false,
@@ -11,11 +11,11 @@ const LocationPicker = dynamic(() => import('@/components/LocationPicker'), {
 
 export default function Page() {
   const [coords, setCoords] = useState({ lat: 0, lng: 0 });
-  const [state, formAction, isPending] = useActionState(createDatacenterAction, null);
+  const [state, formAction, isPending] = useActionState(createGreenhouseAction, null);
 
   return (
     <div className="max-w-2xl mx-auto p-8 shadow-md rounded-lg bg-background my-10 border border-border">
-      <h1 className="text-3xl font-extrabold mb-8 text-foreground text-center">Add New Datacenter</h1>
+      <h1 className="text-3xl font-extrabold mb-8 text-foreground text-center">Add New Greenhouse</h1>
       
       <form action={formAction} className="space-y-6">
         {state?.error && (
@@ -25,7 +25,7 @@ export default function Page() {
         )}
 
         <div className="space-y-2">
-          <label className="text-sm font-semibold text-foreground/80">Datacenter Name</label>
+          <label className="text-sm font-semibold text-foreground/80">Greenhouse Name</label>
           <input name="name" type="text" required placeholder="e.g. Northern Lights Data Center" className="w-full bg-background border-input border p-3 rounded-md focus:ring-2 focus:ring-blue-500 outline-none transition-all text-foreground" />
         </div>
 
@@ -46,39 +46,45 @@ export default function Page() {
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div className="space-y-2">
-            <label className="text-sm font-semibold text-foreground/80">Avg Consumption (kW)</label>
-            <input name="avgElectricConsumptionKw" type="number" step="0.01" required className="w-full bg-background border-input border p-3 rounded-md focus:ring-2 focus:ring-blue-500 outline-none transition-all text-foreground" />
+            <label className="text-sm font-semibold text-foreground/80">Ideal Temperature (°C)</label>
+            <input name="idealTemperatureC" type="number" step="0.01" required className="w-full bg-background border-input border p-3 rounded-md focus:ring-2 focus:ring-blue-500 outline-none transition-all text-foreground" />
           </div>
           <div className="space-y-2">
-            <label className="text-sm font-semibold text-foreground/80">PUE</label>
-            <input name="pue" type="number" step="0.01" required placeholder="e.g. 1.2" className="w-full bg-background border-input border p-3 rounded-md focus:ring-2 focus:ring-blue-500 outline-none transition-all text-foreground" />
+            <label className="text-sm font-semibold text-foreground/80">Current Temperature (°C)</label>
+            <input name="currentTemperatureC" type="number" step="0.01" required className="w-full bg-background border-input border p-3 rounded-md focus:ring-2 focus:ring-blue-500 outline-none transition-all text-foreground" />
           </div>
         </div>
 
         <div className="space-y-2">
-          <label className="text-sm font-semibold text-foreground/80">Cooling Type</label>
-          <select name="coolingType" required defaultValue="" className="w-full bg-background border-input border p-3 rounded-md focus:ring-2 focus:ring-blue-500 outline-none transition-all appearance-none cursor-pointer text-foreground">
-            <option value="" disabled>Select Cooling Type</option>
-            <option value="WATER">Water</option>
-            <option value="AIR">Air</option>
+          <label className="text-sm font-semibold text-foreground/80">Heat Support from Datacenter (Joules)</label>
+          <input name="heatSupportFromDatacenterJoules" type="number" step="0.01" required className="w-full bg-background border-input border p-3 rounded-md focus:ring-2 focus:ring-blue-500 outline-none transition-all text-foreground" />
+        </div>
+
+        <div className="space-y-2">
+          <label className="text-sm font-semibold text-foreground/80">Heating Energy Source</label>
+          <select name="heatingEnergySource" required defaultValue="" className="w-full bg-background border-input border p-3 rounded-md focus:ring-2 focus:ring-blue-500 outline-none transition-all appearance-none cursor-pointer text-foreground">
+            <option value="" disabled>Select Heating Energy Source</option>
+            <option value="ELECTRIC">Electric</option>
+            <option value="GAS">Gas</option>
+            <option value="WASTE_HEAT">Waste Heat</option>
           </select>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div className="space-y-2">
-            <label className="text-sm font-semibold text-foreground/80">Cooling Energy (kW)</label>
-            <input name="avgCoolingEnergyKw" type="number" step="0.01" required className="w-full bg-background border-input border p-3 rounded-md focus:ring-2 focus:ring-blue-500 outline-none transition-all text-foreground" />
+            <label className="text-sm font-semibold text-foreground/80">Avg Consumption (kW)</label>
+            <input name="avgElectricConsumptionKw" type="number" step="0.01" required className="w-full bg-background border-input border p-3 rounded-md focus:ring-2 focus:ring-blue-500 outline-none transition-all text-foreground" />
           </div>
           <div className="space-y-2">
-            <label className="text-sm font-semibold text-foreground/80">Network Usage (Tbps)</label>
-            <input name="avgNetworkUsageTbps" type="number" step="0.01" required className="w-full bg-background border-input border p-3 rounded-md focus:ring-2 focus:ring-blue-500 outline-none transition-all text-foreground" />
+            <label className="text-sm font-semibold text-foreground/80">Water Usage (Liters/Day)</label>
+            <input name="waterUsageLitersPerDay" type="number" step="0.01" required className="w-full bg-background border-input border p-3 rounded-md focus:ring-2 focus:ring-blue-500 outline-none transition-all text-foreground" />
           </div>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div className="space-y-2">
-            <label className="text-sm font-semibold text-foreground/80">Renewable Energy (%)</label>
-            <input name="renewableEnergyPercentage" type="number" step="0.01" min="0" max="100" required className="w-full bg-background border-input border p-3 rounded-md focus:ring-2 focus:ring-blue-500 outline-none transition-all text-foreground" />
+            <label className="text-sm font-semibold text-foreground/80">CO2 Enrichment Target (PPM)</label>
+            <input name="co2EnrichmentTargetPpm" type="number" step="0.01" required className="w-full bg-background border-input border p-3 rounded-md focus:ring-2 focus:ring-blue-500 outline-none transition-all text-foreground" />
           </div>
           <div className="space-y-2">
             <label className="text-sm font-semibold text-foreground/80">Carbon Footprint (Mt)</label>
@@ -91,7 +97,7 @@ export default function Page() {
           disabled={isPending}
           className="w-full bg-blue-600 text-white py-4 rounded-md font-bold text-lg hover:bg-blue-700 transition-colors shadow-lg mt-4 disabled:bg-blue-300 disabled:cursor-not-allowed"
         >
-          {isPending ? 'Creating...' : 'Create Datacenter'}
+          {isPending ? 'Creating...' : 'Create Greenhouse'}
         </button>
       </form>
     </div>
