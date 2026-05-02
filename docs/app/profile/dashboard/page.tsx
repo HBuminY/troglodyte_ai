@@ -55,7 +55,7 @@ export default function DashboardPage() {
 
   return (
     <main>
-      <div className='w-full'>
+      <div className='w-full pt-20'>
         {isClient && ( // Conditionally render LocationPicker only on the client
             <LocationPicker
               onLocationSelect={(lat, lng) => { return false }}
@@ -64,7 +64,7 @@ export default function DashboardPage() {
           )}
       </div>
 
-      <div className="flex-1 w-full p-8 h-[calc(100vh-64px)] overflow-hidden">
+      <div className="flex-1 w-full p-8 h-[calc(100vh-80px)] overflow-hidden">
         <section className="flex flex-row gap-8 h-full overflow-auto pb-4">
           <div className="min-w-[600px] flex-1 h-full overflow-auto">
             <DataListDisplay title="Data Centers" data={datacenters} />

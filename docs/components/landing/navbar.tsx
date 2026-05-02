@@ -12,7 +12,7 @@ export async function Navbar() {
   const { data: { user } } = await supabase.auth.getUser();
 
   return (
-    <header className="fixed top-0 left-0 right-0 z-50 border-b border-border/40 bg-background/95 backdrop-blur-md h-20">
+    <header className=" fixed top-0 left-0 right-0 z-[1001] border-b border-border/40 bg-background/95 backdrop-blur-md h-20">
       <nav className="mx-auto flex max-w-7xl items-center justify-between px-6 h-full">
         {/* Logo */}
         <Link href="/" className="flex items-center h-full bg-gradient-to-t from-white to-gray-800 px-2 rounded-sm">
