@@ -8,8 +8,21 @@ import { SignUpUserSteps } from "@/components/tutorial/sign-up-user-steps";
 import { hasEnvVars } from "@/lib/utils";
 import Link from "next/link";
 import { Suspense } from "react";
+import { prisma } from "@/lib/prisma";
 
-export default function Home() {
+export default async function Home() {
+  // Ensure there's a record to test with
+  const testCount = await prisma.testTable.count();
+  if (testCount === 0) {
+    await prisma.testTable.create({
+      data: { message: "Hello Prisma!" },
+    });
+  }
+
+  const testRecords = await prisma.testTable.findMany({
+    orderBy: { createdAt: 'desc' },
+  });
+
   return (
     <main className="min-h-screen flex flex-col items-center">
       <div className="flex-1 w-full flex flex-col gap-20 items-center">
@@ -32,7 +45,15 @@ export default function Home() {
         </nav>
         <div className="flex-1 flex flex-col gap-20 max-w-5xl p-5">
           <Hero />
+          
           <main className="flex-1 flex flex-col gap-6 px-4">
+            <h2 className="font-medium text-xl mb-4">Prisma Test Data</h2>
+            <div className="bg-muted p-4 rounded-md">
+              <pre className="text-sm overflow-auto">
+                {JSON.stringify(testRecords, null, 2)}
+              </pre>
+            </div>
+
             <h2 className="font-medium text-xl mb-4">Next steps</h2>
             {hasEnvVars ? <SignUpUserSteps /> : <ConnectSupabaseSteps />}
           </main>
