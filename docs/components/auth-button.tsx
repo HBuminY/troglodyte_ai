@@ -3,7 +3,12 @@ import { Button } from "./ui/button";
 import { createClient } from "@/lib/supabase/server";
 import { LogoutButton } from "./logout-button";
 import { prisma } from "@/lib/prisma";
-import { DropdownMenu, DropdownMenuContent, DropdownMenuTrigger } from "@radix-ui/react-dropdown-menu";
+import { 
+  DropdownMenu, 
+  DropdownMenuContent, 
+  DropdownMenuItem, 
+  DropdownMenuTrigger 
+} from "./ui/dropdown-menu";
 
 export async function AuthButton() {
   const supabase = await createClient();
@@ -26,20 +31,20 @@ export async function AuthButton() {
           </Button>
         </DropdownMenuTrigger>
         <DropdownMenuContent className="w-content" align="start">
-          <Button asChild variant="ghost" size="sm" className="w-full justify-start">
+          <DropdownMenuItem asChild>
             <Link href="/profile/dashboard">Dashboard</Link>
-          </Button>
-          <Button asChild variant="ghost" size="sm" className="w-full justify-start">
+          </DropdownMenuItem>
+          <DropdownMenuItem asChild>
             <Link href="/profile/settings">Settings</Link>
-          </Button>
+          </DropdownMenuItem>
           {dbUser && dbUser.role === "ADMIN" && (
           <>
-            <Button variant="ghost" size="sm" className="w-full justify-start">
-              <Link href="/profile/add-datacenter">add datacenter</Link>
-            </Button>
-            <Button variant="ghost" size="sm" className="w-full justify-start">
-              <Link href="/profile/add-greenhouse">add greenhouse</Link>
-            </Button>
+            <DropdownMenuItem asChild>
+              <Link href="/profile/add-datacenter">Add Datacenter</Link>
+            </DropdownMenuItem>
+            <DropdownMenuItem asChild>
+              <Link href="/profile/add-greenhouse">Add Greenhouse</Link>
+            </DropdownMenuItem>
           </>
           )}
         </DropdownMenuContent>
