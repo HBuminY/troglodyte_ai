@@ -11,3 +11,36 @@ model TestTable {
   message   String
   createdAt DateTime @default(now())
 }
+
+model Datacenter {
+  id                        String   @id @default(uuid())
+  name                      String
+  latitude                  Float    // Coordinate location
+  longitude                 Float    // Coordinate location
+  avgElectricConsumptionKw  Float    // Average electric consumption in kW
+  pue                       Float    // Power Usage Effectiveness
+  coolingType               String   // e.g., "WATER" or "AIR"
+  avgCoolingEnergyKw        Float    // Average energy used for cooling in kW
+  avgNetworkUsageTbps       Float    // Average network usage in Tbps
+  renewableEnergyPercentage Float    // Percentage of renewable energy (0-100%)
+  carbonFootprintMt         Float    // Carbon footprint (Metric tons CO2e)
+  createdAt                 DateTime @default(now())
+  updatedAt                 DateTime @updatedAt
+}
+
+model Greenhouse {
+  id                        String   @id @default(uuid())
+  name                      String
+  latitude                  Float    // Coordinate location
+  longitude                 Float    // Coordinate location
+  idealTemperatureC         Float    // Ideal temperature in Celsius
+  currentTemperatureC       Float    // Current temperature in Celsius
+  heatSupportFromDatacenterJoules Float // Heat energy received from the datacenter in Joules
+  heatingEnergySource       String   // e.g., "ELECTRIC", "GAS", "WASTE_HEAT"
+  avgElectricConsumptionKw  Float    // Average electric consumption in kW
+  waterUsageLitersPerDay    Float    // Water usage for plants & cooling
+  co2EnrichmentTargetPpm    Float    // Supplemental CO2 usage target
+  carbonFootprintMt         Float    // Carbon footprint (Metric tons CO2e)
+  createdAt                 DateTime @default(now())
+  updatedAt                 DateTime @updatedAt
+}

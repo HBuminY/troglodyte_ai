@@ -8,10 +8,27 @@ const defaultUrl = process.env.VERCEL_URL
   : "http://localhost:3000";
 
 export const metadata: Metadata = {
-  metadataBase: new URL(defaultUrl),
-  title: "Next.js and Supabase Starter Kit",
-  description: "The fastest way to build apps with Next.js and Supabase",
-};
+  title: 'Troglodyte.AI | Yeşil Veri Altyapısı',
+  description: "Kapadokya'nın atıl kaya oyma depolarını sıfır soğutma maliyetli Yeşil Veri Merkezlerine dönüştürüyoruz. Atık ısıyı seralara yönlendirerek sanayiciyi karbon vergisinden kurtarıyoruz.",
+  generator: 'v0.app',
+  icons: {
+    icon: [
+      {
+        url: '/icon-light-32x32.png',
+        media: '(prefers-color-scheme: light)',
+      },
+      {
+        url: '/icon-dark-32x32.png',
+        media: '(prefers-color-scheme: dark)',
+      },
+      {
+        url: '/icon.svg',
+        type: 'image/svg+xml',
+      },
+    ],
+    apple: '/apple-icon.png',
+  },
+}
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
