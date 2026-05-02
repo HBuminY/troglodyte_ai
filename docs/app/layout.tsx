@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Geist } from "next/font/google";
 import { ThemeProvider } from "next-themes";
+import { Navbar } from "@/components/landing/navbar";
 import "./globals.css";
 
 const defaultUrl = process.env.VERCEL_URL
@@ -50,7 +51,10 @@ export default function RootLayout({
           enableSystem
           disableTransitionOnChange
         >
-          {children}
+          <Navbar />
+          <main className="pt-20">
+            {children}
+          </main>
         </ThemeProvider>
       </body>
     </html>
