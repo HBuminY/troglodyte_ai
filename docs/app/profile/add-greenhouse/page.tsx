@@ -11,15 +11,21 @@ const LocationPicker = dynamic(() => import('@/components/LocationPicker'), {
 
 export default function Page() {
   const [coords, setCoords] = useState({ lat: 0, lng: 0 });
-  const [existingLocations, setExistingLocations] = useState<Record<string, { lat: number; lng: number }>>({});
+  const [existingLocations, setExistingLocations] = useState<Record<string, { lat: number; lng: number; color?: 'blue' | 'green' }>>({});
+  const [isClient, setIsClient] = useState(false);
   const [state, formAction, isPending] = useActionState(createGreenhouseAction, null);
 
   useEffect(() => {
+    setIsClient(true);
     getGreenhousesAction().then((greenhouses) => {
       const locations = greenhouses.reduce((acc, gh) => {
-        acc[gh.name] = { lat: gh.latitude, lng: gh.longitude };
+        acc[gh.name] = { 
+          lat: gh.latitude, 
+          lng: gh.longitude,
+          color: 'green'
+        };
         return acc;
-      }, {} as Record<string, { lat: number; lng: number }>);
+      }, {} as Record<string, { lat: number; lng: number; color?: 'blue' | 'green' }>);
       setExistingLocations(locations);
     });
   }, []);
@@ -43,10 +49,12 @@ export default function Page() {
         <div className="space-y-2">
           <label className="text-sm font-semibold text-foreground/80 block">Location (Click on the map to set coordinates)</label>
           <div className="rounded-md overflow-hidden border border-input">
-            <LocationPicker 
-              onLocationSelect={(lat, lng) => setCoords({ lat, lng })} 
-              locations={existingLocations}
-            />
+            {isClient && (
+              <LocationPicker 
+                onLocationSelect={(lat, lng) => setCoords({ lat, lng })} 
+                locations={existingLocations}
+              />
+            )}
           </div>
           <div className="flex gap-4 text-xs text-muted-foreground mt-1 font-mono">
             <span>Lat: {coords.lat.toFixed(6)}</span>

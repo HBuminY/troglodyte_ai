@@ -16,7 +16,7 @@ export default function DashboardPage() {
   const [datacenters, setDatacenters] = useState<any[]>([]);
   const [greenhouses, setGreenhouses] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
-  const [displayedLocations, setDisplayedLocations] = useState<Record<string, { lat: number; lng: number }>>({});
+  const [displayedLocations, setDisplayedLocations] = useState<Record<string, { lat: number; lng: number; color?: 'blue' | 'green' }>>({});
   const [isClient, setIsClient] = useState(false);
 
   useEffect(() => {
@@ -31,12 +31,12 @@ export default function DashboardPage() {
         setDatacenters(dcData || []);
         setGreenhouses(ghData || []);
 
-        const locations: Record<string, { lat: number; lng: number }> = {};
+        const locations: Record<string, { lat: number; lng: number; color?: 'blue' | 'green' }> = {};
         dcData?.forEach((dc: any) => {
-          locations[dc.name] = { lat: dc.latitude, lng: dc.longitude };
+          locations[dc.name] = { lat: dc.latitude, lng: dc.longitude, color: 'blue' };
         });
         ghData?.forEach((gh: any) => {
-          locations[gh.name] = { lat: gh.latitude, lng: gh.longitude };
+          locations[gh.name] = { lat: gh.latitude, lng: gh.longitude, color: 'green' };
         });
         setDisplayedLocations(locations);
         
