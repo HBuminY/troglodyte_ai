@@ -1,6 +1,6 @@
 "use server";
 
-import { createGreenhouse } from "@/lib/db/greenhouses";
+import { createGreenhouse, getGreenhouses } from "@/lib/db/greenhouses";
 import { Prisma } from "@prisma/client";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
@@ -86,4 +86,13 @@ export async function createGreenhouseAction(prevState: FormState | null, formDa
 
   revalidatePath("/profile");
   redirect("/profile");
+}
+
+export async function getGreenhousesAction() {
+  try {
+    return await getGreenhouses();
+  } catch (error) {
+    console.error("Failed to fetch greenhouses:", error);
+    return [];
+  }
 }

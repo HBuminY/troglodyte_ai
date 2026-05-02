@@ -1,6 +1,6 @@
 "use server";
 
-import { createDatacenter } from "@/lib/db/datacenters";
+import { createDatacenter, getDatacenters } from "@/lib/db/datacenters";
 import { Prisma } from "@prisma/client";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
@@ -81,4 +81,13 @@ export async function createDatacenterAction(prevState: FormState | null, formDa
 
   revalidatePath("/profile");
   redirect("/profile");
+}
+
+export async function getDatacentersAction() {
+  try {
+    return await getDatacenters();
+  } catch (error) {
+    console.error("Failed to fetch datacenters:", error);
+    return [];
+  }
 }

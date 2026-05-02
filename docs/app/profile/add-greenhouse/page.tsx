@@ -1,8 +1,8 @@
 'use client';
 
 import dynamic from 'next/dynamic';
-import { useState, useActionState } from 'react';
-import { createGreenhouseAction } from './actions';
+import { useState, useActionState, useEffect } from 'react';
+import { createGreenhouseAction, getGreenhousesAction } from './actions';
 
 const LocationPicker = dynamic(() => import('@/components/LocationPicker'), { 
   ssr: false,
@@ -11,7 +11,18 @@ const LocationPicker = dynamic(() => import('@/components/LocationPicker'), {
 
 export default function Page() {
   const [coords, setCoords] = useState({ lat: 0, lng: 0 });
+  const [existingLocations, setExistingLocations] = useState<Record<string, { lat: number; lng: number }>>({});
   const [state, formAction, isPending] = useActionState(createGreenhouseAction, null);
+
+  useEffect(() => {
+    getGreenhousesAction().then((greenhouses) => {
+      const locations = greenhouses.reduce((acc, gh) => {
+        acc[gh.name] = { lat: gh.latitude, lng: gh.longitude };
+        return acc;
+      }, {} as Record<string, { lat: number; lng: number }>);
+      setExistingLocations(locations);
+    });
+  }, []);
 
   return (
     <div className="max-w-2xl mx-auto p-8 shadow-md rounded-lg bg-background my-10 border border-border">
@@ -32,7 +43,10 @@ export default function Page() {
         <div className="space-y-2">
           <label className="text-sm font-semibold text-foreground/80 block">Location (Click on the map to set coordinates)</label>
           <div className="rounded-md overflow-hidden border border-input">
-            <LocationPicker onLocationSelect={(lat, lng) => setCoords({ lat, lng })} />
+            <LocationPicker 
+              onLocationSelect={(lat, lng) => setCoords({ lat, lng })} 
+              locations={existingLocations}
+            />
           </div>
           <div className="flex gap-4 text-xs text-muted-foreground mt-1 font-mono">
             <span>Lat: {coords.lat.toFixed(6)}</span>

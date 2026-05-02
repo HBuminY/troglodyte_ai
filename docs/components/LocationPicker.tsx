@@ -1,7 +1,7 @@
 // components/LocationPicker.tsx
 'use client';
 
-import { MapContainer, TileLayer, Marker, useMapEvents } from 'react-leaflet';
+import { MapContainer, TileLayer, Marker, Popup, useMapEvents } from 'react-leaflet';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 import { useState } from 'react';
@@ -14,7 +14,15 @@ L.Icon.Default.mergeOptions({
   shadowUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-shadow.png',
 });
 
-export default function LocationPicker({ onLocationSelect }: { onLocationSelect: (lat: number, lng: number) => void }) {
+interface LocationPickerProps {
+  onLocationSelect: (lat: number, lng: number) => void;
+  locations?: Record<string, { lat: number; lng: number }>;
+}
+
+export default function LocationPicker({ 
+  onLocationSelect, 
+  locations = {} 
+}: LocationPickerProps) {
   const [position, setPosition] = useState<[number, number]>([38.6244, 34.7144]); // Default coords
 
   function LocationMarker() {
@@ -41,6 +49,12 @@ export default function LocationPicker({ onLocationSelect }: { onLocationSelect:
     <MapContainer center={position} zoom={13} style={{ height: '400px', width: '100%' }}>
       <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
       <LocationMarker />
+      
+      {Object.entries(locations).map(([name, coords]) => (
+        <Marker key={name} position={[coords.lat, coords.lng]}>
+          <Popup>{name}</Popup>
+        </Marker>
+      ))}
     </MapContainer>
   );
 }
