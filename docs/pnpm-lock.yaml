@@ -47,12 +47,18 @@ importers:
       lucide-react:
         specifier: ^0.511.0
         version: 0.511.0(react@19.2.5)
+      munkres-js:
+        specifier: ^1.2.2
+        version: 1.2.2
       next:
         specifier: latest
         version: 16.2.4(react-dom@19.2.5(react@19.2.5))(react@19.2.5)
       next-themes:
         specifier: ^0.4.6
         version: 0.4.6(react-dom@19.2.5(react@19.2.5))(react@19.2.5)
+      openrouteservice-js:
+        specifier: ^0.4.1
+        version: 0.4.1
       pg:
         specifier: ^8.20.0
         version: 8.20.0
@@ -2035,6 +2041,9 @@ packages:
   ms@2.1.3:
     resolution: {integrity: sha512-6FlzubTLZG3J2a/NVCAleEhjzq5oxgHyaCU9yYXvcLsvoVaHJq/s5xXI6/XXP6tz7R9xAOtHnSO/tXtF3WRTlA==}
 
+  munkres-js@1.2.2:
+    resolution: {integrity: sha512-0oF4tBDvzx20CYzQ44tTJMfwTBJWXe7cE73Sa/u7Mz7X8jRtyOXOGE9kJBhCfX7Akku3Iy/WHa0sRgqLRq2xaQ==}
+
   mysql2@3.15.3:
     resolution: {integrity: sha512-FBrGau0IXmuqg4haEZRBfHNWB5mUARw6hNwPDXXGg0XzVJ50mr/9hb267lvpVMnhZ1FON3qNd4Xfcez1rbFwSg==}
     engines: {node: '>= 8.0'}
@@ -2135,6 +2144,9 @@ packages:
 
   ohash@2.0.11:
     resolution: {integrity: sha512-RdR9FQrFwNBNXAr4GixM8YaRZRJ5PUWbKYbE5eOsrwAjJW0q2REGcf79oYPsLyskQCZG1PLN+S/K1V00joZAoQ==}
+
+  openrouteservice-js@0.4.1:
+    resolution: {integrity: sha512-Oeb/KgzaYXEtafSHB40KfZvHFfTSPhtt0/oEf0jv5o5Ljw3//+C63CFxbknOqDBrOkYLLQMMCjJGa54rUOBtLg==}
 
   optionator@0.9.4:
     resolution: {integrity: sha512-6IpQ7mKUxRcZNLIObR0hz7lxsapSSIYNZJwXPGeF0mTVqGKFIXj1DQcMoT22S3ROcLyY/rz0PWaWZ9ayWmad9g==}
@@ -4754,6 +4766,8 @@ snapshots:
 
   ms@2.1.3: {}
 
+  munkres-js@1.2.2: {}
+
   mysql2@3.15.3:
     dependencies:
       aws-ssl-profiles: 1.1.2
@@ -4867,6 +4881,8 @@ snapshots:
       es-object-atoms: 1.1.1
 
   ohash@2.0.11: {}
+
+  openrouteservice-js@0.4.1: {}
 
   optionator@0.9.4:
     dependencies:
