@@ -2,13 +2,20 @@ import Link from "next/link";
 import { Button } from "./ui/button";
 import { createClient } from "@/lib/supabase/server";
 import { LogoutButton } from "./logout-button";
+import { prisma } from "@/lib/prisma";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuTrigger } from "@radix-ui/react-dropdown-menu";
 
 export async function AuthButton() {
   const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
 
-  // getUser() is the more reliable source for server-side auth checks
-  const { data: { user } } = await supabase.auth.getUser();
+  const dbUser = user 
+    ? await prisma.user.findUnique({
+        where: { id: user.id },
+      })
+    : null;
 
   return user ? (
     <div className="flex items-center gap-4">
@@ -25,17 +32,18 @@ export async function AuthButton() {
           <Button asChild variant="ghost" size="sm" className="w-full justify-start">
             <Link href="/profile/settings">Settings</Link>
           </Button>
+          {dbUser && dbUser.role === "ADMIN" && (
+          <>
+            <Button variant="ghost" size="sm" className="w-full justify-start">
+              <Link href="/profile/add-datacenter">add datacenter</Link>
+            </Button>
+            <Button variant="ghost" size="sm" className="w-full justify-start">
+              <Link href="/profile/add-greenhouse">add greenhouse</Link>
+            </Button>
+          </>
+          )}
         </DropdownMenuContent>
       </DropdownMenu>
-      {/* <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Link href="/profile"></Link>
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent className="w-content" align="start">
-            {"hello!"}
-          </DropdownMenuContent>
-        </DropdownMenu> */}
       <LogoutButton />
     </div>
   ) : (
