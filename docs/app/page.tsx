@@ -16,9 +16,7 @@ export default async function Home() {
         <Footer />
       </div>
 
-      <div className="fixed bottom-4 right-4 z-50">
-        <ThemeSwitcher />
-      </div>
+      
     </div>
   );
 }

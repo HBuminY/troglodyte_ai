@@ -3,6 +3,7 @@ import { Geist } from "next/font/google";
 import { ThemeProvider } from "next-themes";
 import { Navbar } from "@/components/landing/navbar";
 import "./globals.css";
+import { ThemeSwitcher } from "@/components/theme-switcher";
 
 const defaultUrl = process.env.VERCEL_URL
   ? `https://${process.env.VERCEL_URL}`
@@ -54,8 +55,12 @@ export default function RootLayout({
           <Navbar />
           <main className="pt-20">
             {children}
+            <div className="fixed bottom-4 right-4 z-50">
+              <ThemeSwitcher />
+            </div>
           </main>
         </ThemeProvider>
+
       </body>
     </html>
   );
