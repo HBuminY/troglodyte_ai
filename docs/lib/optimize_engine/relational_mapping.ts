@@ -7,6 +7,15 @@ import { Datacenter, Greenhouse } from "@prisma/client";
 const GRID_CARBON_INTENSITY_KG_KWH = 0.475; // Average kg CO2e per kWh
 const GAS_CARBON_INTENSITY_KG_KWH = 0.202;  // Average kg CO2e per kWh for natural gas
 
+// Typical efficiency factors for the heating systems being replaced.
+// Replacing a gas boiler (85% efficient) saves more primary energy than just the heat delivered.
+const GAS_BOILER_EFFICIENCY = 0.85; 
+const ELECTRIC_HEATER_COP = 1.0;
+
+// Coefficient of Performance (COP) for Data Center cooling. 
+// Represents how many units of heat are removed per unit of electricity used.
+const DC_COOLING_COP = 3.0; 
+
 const munkres = require("munkres-js");
 
 /**
@@ -95,16 +104,29 @@ export function calculateGreenhouseCarbonOffset(gh: Greenhouse): number {
   const energySavedKwhYear = gh.heatSupportFromDatacenterJoules / 3600000;
   
   let intensity = 0;
+  let efficiency = 1.0;
+
   switch (gh.heatingEnergySource) {
     case 'GAS':
       intensity = GAS_CARBON_INTENSITY_KG_KWH;
+      efficiency = GAS_BOILER_EFFICIENCY;
       break;
     case 'ELECTRIC':
       intensity = GRID_CARBON_INTENSITY_KG_KWH;
+      efficiency = ELECTRIC_HEATER_COP;
       break;
     default:
       intensity = 0; // If already using waste heat or other, no additional offset
   }
 
-  return (energySavedKwhYear * intensity) / 1000;
+  // 1. Calculate Greenhouse carbon savings (avoided fuel/electricity)
+  const fuelEnergyAvoidedKwh = energySavedKwhYear / efficiency;
+  const fuelCarbonOffsetMt = (fuelEnergyAvoidedKwh * intensity) / 10;
+
+  // 2. Calculate Data Center carbon savings (avoided cooling energy)
+  // Redirecting heat to the GH reduces the load on the DC's rejection system.
+  const coolingEnergyAvoidedKwh = energySavedKwhYear / DC_COOLING_COP;
+  const coolingCarbonOffsetMt = (coolingEnergyAvoidedKwh * GRID_CARBON_INTENSITY_KG_KWH);
+
+  return fuelCarbonOffsetMt + coolingCarbonOffsetMt;
 }

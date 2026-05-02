@@ -4,7 +4,13 @@
 import dynamic from 'next/dynamic';
 import { DataListDisplay } from "@/components/dashboard/data-list-display";
 import { useState, useEffect, useCallback } from 'react';
-import { getGreenhousesAction, getDatacentersAction, getOptimizedDCsToGHsMatrixAction } from "./actions";
+import { 
+  getGreenhousesAction, 
+  getDatacentersAction, 
+  getOptimizedDCsToGHsMatrixAction,
+  calculateDCCarbonFootprintAction,
+  calculateGreenhouseCarbonOffsetAction
+} from "./actions";
 import { Button } from '@/components/ui/button';
 
 const LocationPicker = dynamic(() => import('@/components/LocationPicker'), {
@@ -61,25 +67,16 @@ export default function DashboardPage() {
     setIsOptimizing(true);
     try {
       const result = await getOptimizedDCsToGHsMatrixAction();
+
+      setDatacenters(result.datacenters);
+      setGreenhouses(result.greenhouses);
       setOptimizationResult(result);
-      console.log("Optimization Result:", result);
     } catch (error) {
       console.error("Failed to get optimized pairing:", error);
     } finally {
       setIsOptimizing(false);
     }
   }, []);
-
-  /**
-   * useEffect Logic:
-   * Appropriate for clearing stale optimization results if the 
-   * base data (datacenters or greenhouses) is updated or refreshed.
-   */
-  useEffect(() => {
-    if (optimizationResult) {
-      setOptimizationResult(null);
-    }
-  }, [datacenters, greenhouses]);
 
   if (loading) {
     return <div className="p-8 text-center">Loading dashboard data...</div>;
@@ -104,7 +101,9 @@ export default function DashboardPage() {
               <ul className="list-disc list-inside">
                 {optimizationResult.results.map((pair: any, index: number) => (
                   <li key={index}>
-                    DC: <strong>{pair.datacenter.name}</strong> → GH: <strong>{pair.greenhouse.name}</strong> (Distance: {pair.distance.toFixed(2)} meters)
+                    DC: <strong>{pair.datacenter.name}</strong> → GH: <strong>{pair.greenhouse.name}</strong> 
+                    <span className="text-muted-foreground ml-2">
+                      ({pair.distance.toFixed(2)}m) | {pair.carbonFootprint.toFixed(4)} - {pair.carbonOffset.toFixed(4)} = {(pair.carbonFootprint - pair.carbonOffset).toFixed(4)} Mt CO2e</span>
                   </li>
                 ))}
               </ul>

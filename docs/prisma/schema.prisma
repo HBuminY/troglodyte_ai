@@ -47,7 +47,6 @@ model Datacenter {
   avgCoolingEnergyKw        Float    // Average energy used for cooling in kW
   avgNetworkUsageTbps       Float    // Average network usage in Tbps
   renewableEnergyPercentage Float    // Percentage of renewable energy (0-100%)
-  carbonFootprintMt         Float    // Carbon footprint (Metric tons CO2e)
   createdAt                 DateTime @default(now())
   updatedAt                 DateTime @updatedAt
 }

@@ -23,7 +23,25 @@ export function DataListDisplay({ data, title }: DataListDisplayProps) {
   }
 
   // Extract headers from the first object keys
-  const headers = Object.keys(data[0]);
+  // Filter out internal database noise to make room for metrics
+  const excludedFields = ["id", "createdAt", "updatedAt"];
+  let headers = Object.keys(data[0]).filter(
+    (key) => !excludedFields.includes(key)
+  );
+
+  // Prioritize "Name" and "Carbon" metrics at the front
+  const priority = ["name", "carbonFootprintMt", "carbonOffsetMt"];
+  headers.sort((a, b) => {
+    const indexA = priority.indexOf(a);
+    const indexB = priority.indexOf(b);
+    if (indexA !== -1 && indexB !== -1) return indexA - indexB;
+    if (indexA !== -1) return -1;
+    if (indexB !== -1) return 1;
+    return 0;
+  });
+
+  // Helper to format values (especially numbers)
+  const formatValue = (val: any) => (typeof val === "number" ? val.toFixed(4) : val);
 
   return (
     <div className="space-y-4 w-full">
@@ -50,7 +68,7 @@ export function DataListDisplay({ data, title }: DataListDisplayProps) {
                         ? value.toLocaleDateString()
                         : typeof value === "object"
                         ? JSON.stringify(value)
-                        : String(value ?? "")}
+                        : String(formatValue(value) ?? "")}
                     </TableCell>
                   );
                 })}
