@@ -2,6 +2,11 @@
 import { getDatacenters } from "../db/datacenters";
 import { getGreenhouses } from "../db/greenhouses";
 import { getDistanceMatrix } from "./ors_utility";
+import { Datacenter, Greenhouse } from "@prisma/client";
+
+const GRID_CARBON_INTENSITY_KG_KWH = 0.475; // Average kg CO2e per kWh
+const GAS_CARBON_INTENSITY_KG_KWH = 0.202;  // Average kg CO2e per kWh for natural gas
+
 const munkres = require("munkres-js");
 
 /**
@@ -64,4 +69,42 @@ export async function pairDCsToGHs(
     greenhouse: greenhouses[ghIdx],
     distance: costMatrix[dcIdx][ghIdx]
   }));
+}
+
+/**
+ * Calculates the estimated annual carbon footprint of a data center in Metric Tons (Mt).
+ * Formula: (Total Energy Consumption * Non-Renewable %) * Grid Intensity
+ */
+export function calculateDCCarbonFootprint(dc: Datacenter): number {
+  // Total energy in kWh per year (assuming avg consumption is continuous)
+  const totalEnergyKwhYear = dc.avgElectricConsumptionKw * dc.pue * 8760;
+  
+  // Only calculate footprint for the non-renewable portion
+  const brownEnergyKwhYear = totalEnergyKwhYear * (1 - dc.renewableEnergyPercentage / 100);
+  
+  // Convert kg CO2e to Metric Tons
+  return (brownEnergyKwhYear * GRID_CARBON_INTENSITY_KG_KWH) / 1000;
+}
+
+/**
+ * Calculates the annual carbon offset (negative footprint) in Metric Tons (Mt) 
+ * for a greenhouse using data center waste heat instead of its original energy source.
+ */
+export function calculateGreenhouseCarbonOffset(gh: Greenhouse): number {
+  // Convert Joules to kWh (1 kWh = 3,600,000 Joules)
+  const energySavedKwhYear = gh.heatSupportFromDatacenterJoules / 3600000;
+  
+  let intensity = 0;
+  switch (gh.heatingEnergySource) {
+    case 'GAS':
+      intensity = GAS_CARBON_INTENSITY_KG_KWH;
+      break;
+    case 'ELECTRIC':
+      intensity = GRID_CARBON_INTENSITY_KG_KWH;
+      break;
+    default:
+      intensity = 0; // If already using waste heat or other, no additional offset
+  }
+
+  return (energySavedKwhYear * intensity) / 1000;
 }
