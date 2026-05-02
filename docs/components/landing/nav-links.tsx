@@ -1,7 +1,9 @@
 "use client"
 
+import { useEffect, useMemo } from "react"
 import Link from "next/link"
-import { usePathname } from "next/navigation"
+import { usePathname, useRouter } from "next/navigation"
+import { createClient } from "@/lib/supabase/client"
 
 const navLinks = [
   { label: "Vizyonumuz", href: "#vizyon" },
@@ -11,7 +13,24 @@ const navLinks = [
 ]
 
 export function NavLinks() {
+  const router = useRouter();
   const pathname = usePathname();
+  const supabase = useMemo(() => createClient(), []);
+
+  useEffect(() => {
+    // This listener ensures that any auth state change (Login, Logout, Token Refresh)
+    // triggers a server-side refresh of the current route and layouts.
+    const {
+      data: { subscription },
+    } = supabase.auth.onAuthStateChange((event) => {
+      if (event === "SIGNED_IN" || event === "SIGNED_OUT") {
+        router.refresh();
+      }
+    });
+
+    return () => subscription.unsubscribe();
+  }, [router, supabase]);
+
   const isLandingPage = pathname === "/";
 
   if (!isLandingPage) return null;
