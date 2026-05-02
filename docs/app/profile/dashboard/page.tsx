@@ -32,12 +32,14 @@ export default function DashboardPage() {
   }
 
   return (
-    <div className="flex-1 w-full flex flex-col gap-12 p-8">
-      <section>
-        <DataListDisplay title="Data Centers" data={datacenters} />
-      </section>
-      <section>
-        <DataListDisplay title="Greenhouses" data={greenhouses} />
+    <div className="flex-1 w-full p-8 h-[calc(100vh-64px)] overflow-hidden">
+      <section className="flex flex-row gap-8 h-full overflow-auto pb-4">
+        <div className="min-w-[600px] flex-1 h-full overflow-auto">
+          <DataListDisplay title="Data Centers" data={datacenters} />
+        </div>
+        <div className="min-w-[600px] flex-1 h-full overflow-auto">
+          <DataListDisplay title="Greenhouses" data={greenhouses} />
+        </div>
       </section>
     </div>
   );
