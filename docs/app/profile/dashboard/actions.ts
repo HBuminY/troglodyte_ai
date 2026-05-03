@@ -54,3 +54,37 @@ export async function calculateDCCarbonFootprintAction(dc: Datacenter) {
 export async function calculateGreenhouseCarbonOffsetAction(gh: Greenhouse) {
   return calculateGreenhouseCarbonOffset(gh);
 }
+
+export async function callModelAction(greenhouses: any[], datacenters: any[]) {
+  try {
+    const modelUrl = "http://localhost:5167/recommend"; // Replace with process.env.MODEL_URL if using environment variable
+    
+    if (!modelUrl) {
+      throw new Error("MODEL_URL is not defined in environment variables");
+    }
+
+    console.log(`[callModelAction] Fetching from: ${modelUrl}`);
+
+    const response = await fetch(modelUrl, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        greenhouses,
+        datacenters: datacenters,
+      }),
+    });
+
+    if (!response.ok) {
+      const errorDetail = await response.text().catch(() => "No error body");
+      console.error(`[callModelAction] Error ${response.status} at ${modelUrl}: ${errorDetail}`);
+      throw new Error(`Model request failed with status: ${response.status}`);
+    }
+
+    return await response.json();
+  } catch (error) {
+    console.error("Error in callModelAction:", error);
+    return null;
+  }
+}

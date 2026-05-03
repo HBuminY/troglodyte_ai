@@ -8,6 +8,7 @@ import {
   getGreenhousesAction, 
   getDatacentersAction, 
   getOptimizedDCsToGHsMatrixAction,
+  callModelAction,
   calculateDCCarbonFootprintAction,
   calculateGreenhouseCarbonOffsetAction
 } from "./actions";
@@ -27,6 +28,7 @@ export default function DashboardPage() {
 
   // State for optimization logic
   const [optimizationResult, setOptimizationResult] = useState<any>(null);
+  const [modelResult, setModelResult] = useState<any>(null);
   const [isOptimizing, setIsOptimizing] = useState(false);
 
   useEffect(() => {
@@ -65,12 +67,21 @@ export default function DashboardPage() {
    */
   const handlePairing = useCallback(async () => {
     setIsOptimizing(true);
+    setModelResult(null); // Clear previous model results
     try {
       const result = await getOptimizedDCsToGHsMatrixAction();
 
       setDatacenters(result.datacenters);
       setGreenhouses(result.greenhouses);
       setOptimizationResult(result);
+
+      const modelData = await callModelAction(result.greenhouses, result.datacenters);
+      console.log("model response: ",modelData);
+      
+      if (modelData) {
+        setModelResult(modelData);
+      }
+
     } catch (error) {
       console.error("Failed to get optimized pairing:", error);
     } finally {
@@ -94,9 +105,9 @@ export default function DashboardPage() {
       </div>
 
       <div>
-        <div>
+        <div className="flex flex-row gap-4 items-start">
           {optimizationResult && (
-            <div className="p-4 bg-green-100 dark:bg-green-900/30 border border-green-200 dark:border-green-800 rounded mt-4">
+            <div className="flex-1 p-4 bg-green-100 dark:bg-green-900/30 border border-green-200 dark:border-green-800 rounded mt-4">
               <h3 className="text-lg font-semibold mb-2">Optimized Pairing Results:</h3>
               <ul className="list-disc list-inside">
                 {optimizationResult.results.map((pair: any, index: number) => (
@@ -107,6 +118,15 @@ export default function DashboardPage() {
                   </li>
                 ))}
               </ul>
+            </div>
+          )}
+
+          {modelResult && (
+            <div className="flex-1 p-4 bg-blue-100 dark:bg-blue-900/30 border border-blue-200 dark:border-blue-800 rounded mt-4">
+              <h3 className="text-lg font-semibold mb-2">Model Output:</h3>
+              <pre className="text-xs overflow-auto max-h-60 p-2 bg-background/50 rounded">
+                {JSON.stringify(modelResult, null, 2)}
+              </pre>
             </div>
           )}
         </div>
