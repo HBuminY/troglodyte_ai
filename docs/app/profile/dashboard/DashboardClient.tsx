@@ -18,7 +18,7 @@ const LocationPicker = dynamic(() => import('@/components/LocationPicker'), {
 });
 
 // Artık Server Component'i children olarak dışarıdan alacağız
-export default function DashboardClient({ children }: { children: React.ReactNode }) {
+export default function DashboardClient({ children , currency }: { children: React.ReactNode, currency?: any }) {
   const [datacenters, setDatacenters] = useState<any[]>([]);
   const [greenhouses, setGreenhouses] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
@@ -134,7 +134,7 @@ export default function DashboardClient({ children }: { children: React.ReactNod
       <div className="flex-1 w-full p-8 h-[calc(100vh-80px)] overflow-hidden">
         <section className="flex flex-row gap-8 h-full overflow-auto pb-4">
           <div className="min-w-[600px] flex-1 h-full overflow-auto">
-            <DataListDisplay title="Data Centers" data={datacenters} isDC={true} />
+            <DataListDisplay title="Data Centers" data={datacenters} currency={currency} isDC={true} />
           </div>
           <div className="min-w-[600px] flex-1 h-full overflow-auto">
             <DataListDisplay title="Greenhouses" data={greenhouses} />

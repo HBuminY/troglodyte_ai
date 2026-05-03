@@ -8,13 +8,15 @@ import {
   TableRow,
 } from "../ui/table";
 import { calculateEstimatedDCCost } from "@/app/profile/dashboard/actions";
+import { getLatestCurrency } from "@/lib/evds";
 interface DataListDisplayProps {
   data: any[];
   title?: string;
   isDC?: boolean; // true if datacenters, false if greenhouses
+  currency?: any; // Optional currency rate for cost calculations
 }
 
-export function DataListDisplay({ data, title , isDC}: DataListDisplayProps) {
+export function DataListDisplay({ data, title , isDC, currency}: DataListDisplayProps) {
   const [tooltip, setTooltip] = useState<{
     text: string;
     x: number;
@@ -80,7 +82,7 @@ export function DataListDisplay({ data, title , isDC}: DataListDisplayProps) {
                 onMouseEnter={async () => {
                   if (isDC && !costs[rowIndex]) {
                     try {
-                      const res = await calculateEstimatedDCCost(row);
+                      const res = await calculateEstimatedDCCost(row, currency ? currency.buying : 45.14);
                       setCosts((prev) => ({
                         ...prev,
                         [rowIndex]: `${formatValue(res.annualCostTRY)} TRY`,
