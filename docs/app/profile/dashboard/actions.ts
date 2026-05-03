@@ -57,6 +57,27 @@ export async function calculateGreenhouseCarbonOffsetAction(gh: Greenhouse) {
   return calculateGreenhouseCarbonOffset(gh);
 }
 
+export async function calculateEstimatedDCCost(dc: Datacenter, currencyRate: number=45.14) {
+  // Average electricity price in USD per kWh (example value)
+  const AVG_ELECTRICITY_PRICE_USD_KWH = 0.12;
+  
+  // Total energy in kWh per year
+  const totalEnergyKwhYear = dc.avgElectricConsumptionKw * dc.pue * 8760;
+  
+  // Calculate cost in USD
+  const annualCostUSD = totalEnergyKwhYear * AVG_ELECTRICITY_PRICE_USD_KWH;
+  
+  // Convert to local currency (TRY) using the provided rate
+  const annualCostTRY = annualCostUSD * currencyRate;
+
+  return {
+    annualCostUSD,
+    annualCostTRY,
+    totalEnergyKwhYear
+  };
+
+}
+
 export async function callModelAction(greenhouses: any[], datacenters: any[]) {
   try {
     const modelUrl = "http://localhost:5167/recommend"; // Replace with process.env.MODEL_URL if using environment variable

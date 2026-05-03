@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import {
   Table,
   TableBody,
@@ -7,13 +7,23 @@ import {
   TableHeader,
   TableRow,
 } from "../ui/table";
-
+import { calculateEstimatedDCCost } from "@/app/profile/dashboard/actions";
 interface DataListDisplayProps {
   data: any[];
   title?: string;
+  isDC?: boolean; // true if datacenters, false if greenhouses
 }
 
-export function DataListDisplay({ data, title }: DataListDisplayProps) {
+export function DataListDisplay({ data, title , isDC}: DataListDisplayProps) {
+  const [tooltip, setTooltip] = useState<{
+    text: string;
+    x: number;
+    y: number;
+    visible: boolean;
+  }>({ text: "", x: 0, y: 0, visible: false });
+
+  const [costs, setCosts] = useState<Record<number, string>>({});
+
   if (!data || data.length === 0) {
     return (
       <div className="p-4 text-center text-muted-foreground">
@@ -41,7 +51,13 @@ export function DataListDisplay({ data, title }: DataListDisplayProps) {
   });
 
   // Helper to format values (especially numbers)
-  const formatValue = (val: any) => (typeof val === "number" ? val.toFixed(4) : val);
+  const formatValue = (val: any) => {
+    if (typeof val !== "number") return val;
+    return new Intl.NumberFormat("en-US", {
+      minimumFractionDigits: 2,
+      maximumFractionDigits: 4,
+    }).format(val);
+  };
 
   return (
     <div className="space-y-4 w-full">
@@ -59,7 +75,44 @@ export function DataListDisplay({ data, title }: DataListDisplayProps) {
           </TableHeader>
           <TableBody>
             {data.map((row, rowIndex) => (
-              <TableRow key={rowIndex}>
+              <TableRow
+                key={rowIndex}
+                onMouseEnter={async () => {
+                  if (isDC && !costs[rowIndex]) {
+                    try {
+                      const res = await calculateEstimatedDCCost(row);
+                      setCosts((prev) => ({
+                        ...prev,
+                        [rowIndex]: `${formatValue(res.annualCostTRY)} TRY`,
+                      }));
+                    } catch (err) {
+                      console.error("Failed to calculate cost:", err);
+                    }
+                  }
+                }}
+                onMouseMove={(e) => {
+                  const val = row[headers[0]];
+                  let text =
+                    val instanceof Date
+                      ? val.toLocaleDateString()
+                      : typeof val === "object"
+                      ? JSON.stringify(val)
+                      : String(formatValue(val) ?? "");
+
+                  if (isDC && costs[rowIndex]) {
+                    text += ` — Est. Annual Cost: ${costs[rowIndex]}`;
+                  }
+
+                  setTooltip({
+                    text,
+                    x: e.clientX,
+                    y: e.clientY,
+                    visible: true,
+                  });
+                }}
+                onMouseLeave={() => setTooltip((t) => ({ ...t, visible: false }))}
+                className="cursor-default"
+              >
                 {headers.map((header) => {
                   const value = row[header];
                   return (
@@ -77,6 +130,18 @@ export function DataListDisplay({ data, title }: DataListDisplayProps) {
           </TableBody>
         </Table>
       </div>
+
+      {tooltip.visible && (
+        <div
+          className="fixed z-50 pointer-events-none px-3 py-1.5 bg-background/90 backdrop-blur-md border border-border/50 rounded-lg shadow-[0_8px_30px_rgb(0,0,0,0.12)] text-[10px] font-bold uppercase tracking-wider text-foreground animate-in fade-in zoom-in-95 duration-200"
+          style={{
+            left: tooltip.x + 15,
+            top: tooltip.y + 15,
+          }}
+        >
+          {tooltip.text}
+        </div>
+      )}
     </div>
   );
 }

@@ -7,7 +7,8 @@ import {
   getGreenhousesAction,
   getDatacentersAction,
   getOptimizedDCsToGHsMatrixAction,
-  callModelAction
+  callModelAction,
+  calculateDCCarbonFootprintAction
 } from "./actions";
 import { Button } from '@/components/ui/button';
 
@@ -133,7 +134,7 @@ export default function DashboardClient({ children }: { children: React.ReactNod
       <div className="flex-1 w-full p-8 h-[calc(100vh-80px)] overflow-hidden">
         <section className="flex flex-row gap-8 h-full overflow-auto pb-4">
           <div className="min-w-[600px] flex-1 h-full overflow-auto">
-            <DataListDisplay title="Data Centers" data={datacenters} />
+            <DataListDisplay title="Data Centers" data={datacenters} isDC={true} />
           </div>
           <div className="min-w-[600px] flex-1 h-full overflow-auto">
             <DataListDisplay title="Greenhouses" data={greenhouses} />
