@@ -9,6 +9,8 @@ import {
   calculateGreenhouseCarbonOffset
 } from "@/lib/optimize_engine/relational_mapping";
 import { Datacenter, Greenhouse } from "@prisma/client";
+import { getLatestCurrency } from "@/lib/evds";
+import { createEvdsCache } from "@/lib/db/evdsCache";
 
 export async function getDatacentersAction() {
   try {

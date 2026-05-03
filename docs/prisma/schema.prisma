@@ -68,3 +68,9 @@ model Greenhouse {
   updatedAt                 DateTime @updatedAt
 }
 
+model EvdsCache{
+  id                        String   @id @default(uuid())
+  api_response              String
+  createdAt                 DateTime @default(now())
+  updatedAt                 DateTime @updatedAt
+}

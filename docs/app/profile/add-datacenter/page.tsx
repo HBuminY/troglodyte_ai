@@ -94,10 +94,7 @@ export default function Page() {
             <label className="text-sm font-semibold text-foreground/80">Renewable Energy (%)</label>
             <input name="renewableEnergyPercentage" type="number" step="0.01" min="0" max="100" required className="w-full bg-background border-input border p-3 rounded-md focus:ring-2 focus:ring-blue-500 outline-none transition-all text-foreground" />
           </div>
-          <div className="space-y-2">
-            <label className="text-sm font-semibold text-foreground/80">Carbon Footprint (Mt)</label>
-            <input name="carbonFootprintMt" type="number" step="0.01" required className="w-full bg-background border-input border p-3 rounded-md focus:ring-2 focus:ring-blue-500 outline-none transition-all text-foreground" />
-          </div>
+
         </div>
 
         <button 

@@ -69,7 +69,6 @@ export async function createDatacenterAction(prevState: FormState | null, formDa
     avgCoolingEnergyKw,
     avgNetworkUsageTbps,
     renewableEnergyPercentage,
-    carbonFootprintMt,
   };
 
   try {
