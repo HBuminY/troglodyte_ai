@@ -19,53 +19,53 @@ Waste heat from servers is:
 | Requirement | Technology / Metric | Verification Method |
 |-------------|---------------------|----------------------|
 | Carbon accounting | Geographic‑based dynamic emissions (gCO2/kWh hourly) | ENTSO‑E transparency platform + Türkiye YEKBİS |
-| Autonomous financial decision via CBRT EVDS API | Run/Pause decision (if electricity price > threshold) | API response <500ms, decision logs |
-| Distance calculation with OpenStreetMap | Shortest route to heat demand points (greenhouses, drying facilities) | Real‑time route optimization |
+| Autonomous financial decision via CBRT EVDS API | `tcmb-doviz-api` integration for live TRY/USD rates to calculate DC cost | API response <500ms, decision logs |
+| Distance calculation with OpenStreetMap | `openrouteservice-js` + Hungarian Algorithm (`munkres-js`) for facility pairing | Real‑time route optimization matrix |
 
 ---
 
 ## 1. System Architecture
 
-- Event‑Driven Microservices Architecture
-- MQTT‑based IoT data streaming
-- Autonomous Decision Engine (AI core) – *POMDP‑based or PPO‑trained decision agent*
-- API Gateway (REST / GraphQL)
-- Kubernetes orchestration – *k3s edge cluster + cloud control plane*
+The project operates through a robust full-stack architecture built to manage the geographic deployment and optimization of the data centers.
+
+- **Control Plane & Dashboard:** Next.js (App Router) with React, styled with Tailwind CSS (Neon Theme)
+- **Database:** PostgreSQL (via Supabase) with Prisma ORM
+- **Optimization Engine:** Node.js backend using `munkres-js` (Hungarian Algorithm) + `openrouteservice-js` for distance matrices
+- **Financial Integration:** `tcmb-doviz-api` for real-time cost calculation
+- **AI Recommendation Engine:** Python-based external model (`/recommend` endpoint) for intelligent facility pairing
 
 **Data Flow Diagram**
 
 ```mermaid
 graph TD
-    subgraph Cave Edge Node
-        Sensors[IoT Sensors: Temp, Humidity] --> MQTT[MQTT Broker]
-        Servers[Edge Servers k3s] --> MQTT
-        Servers --> HeatPump[Heat Pump Controller]
+    subgraph Edge Operations
+        Servers[Underground Data Centers] --> DB[(Supabase PostgreSQL)]
+        Greenhouse[Greenhouses & Drying Facilities] --> DB
     end
     
-    subgraph Cloud Control Plane
-        MQTT --> Ingestion[Data Ingestion Service]
-        Ingestion --> Twin[Digital Twin & Simulation]
-        Twin --> Agent[Autonomous Decision Agent POMDP]
-        Agent --> EVDS[CBRT EVDS API]
-        Agent --> ENTSOE[ENTSO-E Emissions]
+    subgraph Control Plane / Dashboard (Next.js)
+        DB --> Prisma[Prisma ORM]
+        Prisma --> Optimization[Optimization Engine: munkres-js]
+        Optimization --> Map[Leaflet Map Visualization]
+        Optimization --> Charts[Recharts Carbon Metrics]
+        
+        API1[tcmb-doviz-api] --> FinOps[Cost Calculations]
+        API2[openrouteservice-js] --> Optimization
     end
     
-    subgraph Symbiosis
-        HeatPump --> Greenhouse[Greenhouses]
-        HeatPump --> FoodDrying[Food Drying Facilities]
+    subgraph AI Layer
+        Optimization --> AIModel[AI Recommendation Model]
+        AIModel --> Insights[Dashboard Recommendations]
     end
-    
-    Agent -->|Run/Pause/Migrate| Servers
-    Agent -->|Adjust Flow| HeatPump
 ```
 
 ---
 
 ## 2. Edge Computing & Digital Twin
 
-- Caves act as low‑latency Edge nodes (e.g., Raspberry Pi CM4 per cave)
-- Real‑time "Digital Twin" model for each facility – *OpenDD or Eclipse Hono based*
-- Heat, humidity, energy flow optimized via simulation – *based on 3D thermal simulation (FVM – OpenFOAM) results*
+- **Low-Latency Edge Nodes:** Caves act as edge nodes (e.g., Raspberry Pi CM4 per cave) feeding data into Supabase.
+- **Digital Twin Dashboard:** Built using Next.js and React, serving as the mission control for real-time monitoring of active nodes and heat recovery sites.
+- **Geographic Mapping & Simulation:** Leaflet integration visualizes exact coordinates, while the optimization engine dynamically simulates heat distribution routes to greenhouses.
 
 **Proof (Simulation outputs):**
 > Digital twin‑based heat distribution and energy flow simulation for all 1,226 caves.
@@ -75,10 +75,10 @@ graph TD
 
 ## 3. Observability & Reliability
 
-- OpenTelemetry for distributed tracing (Jaeger backend)
-- Prometheus + Grafana for metrics – *Alertmanager with automated runbook*
-- SLA / SLO definitions – *e.g., SLO: 99.95% uptime, max 2°C temperature deviation*
-- Self‑healing infrastructure – *K8s readiness/liveness probes + node problem detector*
+- **Carbon Nexus Monitoring:** Recharts calculates and visualizes net CO2 impact, offset metrics, and renewable energy percentages dynamically.
+- **Real-Time Data Flow:** Prisma and Next.js Server Actions ensure low-latency data fetching and UI updates.
+- **Algorithm Performance:** The Hungarian algorithm (`munkres-js`) calculates optimized pairings between datacenters and greenhouses instantly.
+- **SLA / SLO definitions:** Designed for 99.95% uptime with highly responsive "Neon Futuristic" interface for immediate visual feedback on system state.
 
 **Proof (Pilot test results):**
 > 72+ hours of continuous operation in Cave #42 (Ortahisar).
@@ -126,7 +126,7 @@ graph TD
 ## 7. FinOps & Carbon Intelligence
 
 - Carbon‑aware workload scheduling – *Defer non‑urgent jobs if carbon intensity > 400 gCO2/kWh*
-- Dynamic cost analysis with CBRT EVDS API – *Price query every 5 minutes, pause if spot price > 3,500 TL/MWh*
+- Dynamic cost analysis with CBRT EVDS API – *Implemented via `tcmb-doviz-api` for real-time TRY/USD rate calculations applied to DC energy costs*
 - SKDM carbon tax optimization – *Green hydrogen certificate plan for Carbon Border Adjustment Mechanism*
 
 **Proof:**
